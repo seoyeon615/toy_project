@@ -36,3 +36,5 @@ jobs:
                       # 3) 서비스 재시작
                       sudo systemctl restart uwsgi
                       sudo nginx -t && sudo systemctl reload nginx || true
+
+                      

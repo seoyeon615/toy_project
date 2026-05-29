@@ -1,5 +1,14 @@
 from django.db import models
-from django.conf import settings # 💡 유저 모델 참조를 위해 불러옵니다.
+from django.conf import settings
+from django.contrib.auth.models import AbstractUser
+
+class User(AbstractUser):
+    name = models.CharField(max_length=50, help_text="본명")
+    grade = models.IntegerField(default=1, help_text="학년 (1~4)")
+
+    def __str__(self):
+        return self.username
+
 
 class Course(models.Model):
     course_number = models.CharField(max_length=20, unique=True, help_text="과목 번호 (학수번호)")
@@ -29,15 +38,3 @@ class Test(models.Model):
 
     def __str__(self):
         return f"[{self.course.subject}] {self.title}"
-
-
-class Comment(models.Model):
-    test = models.ForeignKey(Test, on_delete=models.CASCADE, related_name='comments', help_text="해당 시험 후기글")
-
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='comments', help_text="댓글 작성자")
-    content = models.TextField(help_text="댓글 내용")
-    is_anonymous = models.BooleanField(default=True, help_text="익명 여부")
-    created_at = models.DateTimeField(auto_now_add=True, help_text="작성일시")
-
-    def __str__(self):
-        return f"{'익명' if self.is_anonymous else self.user.username} - {self.content[:10]}"

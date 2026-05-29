@@ -1,0 +1,49 @@
+<p><a href="{% url 'TestBack:test_list' %}">&lt; 목록으로</a></p>
+
+<h1>{{ test.title }}</h1>
+<p>
+    {{ test.course.subject }} | {{ test.user.username }} | 
+    {{ test.user.grade }}학년 | {{ test.created_at|date:"Y.m.d H:i" }} | 조회 {{ test.views }}
+</p>
+
+{% if test.user == user %}
+    <p>
+        <a href="{% url 'TestBack:test_update' test.pk %}">수정하기</a>
+        <form action="{% url 'TestBack:test_delete' test.pk %}" method="post" style="display:inline;" onsubmit="return confirm('게시글을 삭제하시겠습니까?\n삭제된 게시글은 복구할 수 없습니다.');">
+            {% csrf_token %}
+            <button type="submit">삭제하기</button>
+        </form>
+    </p>
+{% endif %}
+
+<hr>
+
+<p><strong>시험 난이도</strong></p>
+<p>평점: {{ test.rating }}.0 / 5.0</p>
+
+<p><strong>시험 유형</strong></p>
+<p>{{ test.test_format }} ({{ test.exam_type }})</p>
+
+<p><strong>총평</strong></p>
+<p>{{ test.content }}</p>
+
+<hr>
+
+<p>
+    <a href="{% url 'TestBack:test_like' test.pk %}">❤️ 좋아요 {{ test.likes.count }}</a> | 
+    <a href="{% url 'TestBack:test_scrap' test.pk %}">📁 스크랩 {{ test.scraps.count }}</a>
+</p>
+
+<hr>
+
+<p><strong>이 작성자의 다른 글</strong></p>
+<ul>
+    {% for other_test in author_other_tests %}
+        <li>
+            <a href="{% url 'TestBack:test_detail' other_test.pk %}">{{ other_test.title }}</a> 
+            ({{ other_test.created_at|date:"Y.m.d" }} | 조회 {{ other_test.views }})
+        </li>
+    {% empty %}
+        <li>다른 글이 없습니다.</li>
+    {% endfor %}
+</ul>

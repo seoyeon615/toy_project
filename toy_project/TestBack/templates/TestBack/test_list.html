@@ -1,0 +1,61 @@
+<p><strong>시험 후기 게시판</strong></p>
+<p>다른 학우들의 시험정보를 참고하고, 나의 시험도 공유해보아요</p>
+
+<form method="get" action="{% url 'TestBack:test_list' %}">
+    <input type="text" name="search" value="{{ search_keyword }}" placeholder="제목,과목명,내용을 입력하세요.">
+    <button type="submit">검색</button>
+</form>
+
+<p><a href="{% url 'TestBack:test_create' %}">후기 작성하기</a></p>
+
+<p>
+    <a href="?sort=latest&search={{ search_keyword }}">최신순</a> | 
+    <a href="?sort=likes&search={{ search_keyword }}">추천순</a>
+</p>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>작성자</th>
+            <th>과목</th>
+            <th>작성일</th>
+            <th>좋아요</th>
+            <th>조회수</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for test in page_obj %}
+            <tr>
+                <td>{{ test.pk }}</td>
+                <td>
+                    <a href="{% url 'TestBack:test_detail' test.pk %}">{{ test.title }}</a>
+                </td>
+                <td>{{ test.user.username }}</td>
+                <td>{{ test.course.subject }}</td>
+                <td>{{ test.created_at|date:"Y.m.d" }}</td>
+                <td>{{ test.likes.count }}</td>
+                <td>{{ test.views }}</td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="7">등록된 게시글이 없습니다. 첫번째 후기를 작성해 보세요!</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<p>
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}&sort={{ sort }}&search={{ search_keyword }}">이전</a>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+        <a href="?page={{ num }}&sort={{ sort }}&search={{ search_keyword }}">{{ num }}</a>
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}&sort={{ sort }}&search={{ search_keyword }}">다음</a>
+    {% endif %}
+</p>

@@ -1,0 +1,44 @@
+<p><a href="{% url 'TestBack:test_list' %}">&lt; 목록으로</a></p>
+
+<h1>시험후기 {% if test %}수정하기{% else %}작성하기{% endif %}</h1>
+
+<form method="post">
+    {% csrf_token %}
+    <p>
+        <label>과목명 *</label>
+        <input type="text" name="subject" value="{{ test.course.subject|default:'' }}" placeholder="과목명을 입력하세요." required>
+    </p>
+    <p>
+        <label>교수님 *</label>
+        <input type="text" name="professor" value="{{ test.course.professor|default:'' }}" placeholder="입력하세요." required>
+    </p>
+    <p>
+        <label>시험종류 *</label>
+        <input type="text" name="exam_type" value="{{ test.exam_type|default:'' }}" placeholder="ex)중간고사" required>
+    </p>
+    <p>
+        <label>시험유형 *</label>
+        <input type="text" name="test_format" value="{{ test.test_format|default:'' }}" placeholder="ex)객관식/주관식" required>
+    </p>
+    <p>
+        <label>난이도 *</label>
+        <input type="number" name="rating" value="{{ test.rating|default:3 }}" min="1" max="5" placeholder="1부터 5사이 숫자로 입력" required>
+    </p>
+    <p>
+        <label>제목 *</label>
+        <input type="text" name="title" value="{{ test.title|default:'' }}" placeholder="제목을 입력하세요. (최대 100자)" required>
+    </p>
+    <p>
+        <label>총평 *</label>
+        <textarea name="content" placeholder="최대 10000자까지 입력 가능합니다." required>{{ test.content|default:'' }}</textarea>
+    </p>
+    
+    <p>
+        <button type="submit">{% if test %}수정완료{% else %}작성완료{% endif %}</button>
+        {% if test %}
+            <a href="{% url 'TestBack:test_detail' test.pk %}">취소</a>
+        {% else %}
+            <a href="{% url 'TestBack:test_list' %}">취소</a>
+        {% endif %}
+    </p>
+</form>

@@ -22,6 +22,11 @@ jobs:
 
                       # 1) 깃 저장소 루트에서 최신 코드
                       cd ${{ secrets.REPO_DIR }}
+                      
+                      # ⬇️ 배포 서버 내 pycache 충돌 방지를 위해 추가된 코드입니다.
+                      find . -name "*.pyc" -delete
+                      find . -name "__pycache__" -delete
+
                       git pull origin main
 
                       # 2) 장고 앱 폴더에서 migrate

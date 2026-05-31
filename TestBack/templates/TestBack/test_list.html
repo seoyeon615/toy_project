@@ -1,4 +1,4 @@
-<!doctype html>
+{% comment %} <!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
@@ -88,4 +88,181 @@
         </p>
         {% endif %}
     </body>
+</html> {% endcomment %}
+
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>멋사대학교 - 시험 후기 게시판</title>
+    <link rel="stylesheet" href="{% static 'css/reviewEmpty.css' %}">
+    <link rel="stylesheet" href="{% static 'css/reviewList.css' %}">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <img src="{% static 'img/1968aca1-6184-4799-a8ac-c3e90184cdc8 1.svg' %}" clss="logo-icon" width="170">
+            </div>
+            <nav class="nav-links">
+                <a href="#" class="active">게시판</a>
+                <a href="#">강의실</a>
+                <a href="#">시간표</a>
+                <a href="#">학점계산기</a>
+            </nav>
+            <div class="nav-icons">
+                {% if user.is_authenticated %}
+                    <span style="font-size: 14px; font-weight: 500; margin-right: 5px;">
+                        {{ user.username }} 님</span>
+                    <a href="{% url 'users:logout' %}" style="font-size: 13px; color: #8E8E8E; text-decoration: none; margin-right: 15px;">로그아웃</a>
+                {% else %}
+                    <a href="{% url 'users:login' %}" style="font-size: 13px; color: #555; text-decoration: none; margin-right: 10px;">로그인</a>
+                    <a href="{% url 'users:signup' %}" style="font-size: 13px; color: #555; text-decoration: none; margin-right: 15px;">회원가입</a>
+                {% endif %}
+                <div><img src="{% static 'img/fluent_alert-48-regular.svg' %}"  width="25"></div>
+                <div><img src="{% static 'img/material-symbols_person.svg' %}" class="icon-user" width="25"></div>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        
+        <aside class="sidebar">
+            <h3 class="sidebar-title">게시판 <span class="arrow-down">▼</span></h3>
+            <ul class="sidebar-menu">
+                <li><a href="#">교수님 후기</a></li>
+                <li class="active"><a href="#">시험 후기</a></li>
+                <li><a href="#">강의 후기</a></li>
+                <li><a href="#">질의응답</a></li>
+            </ul>
+        </aside>
+
+        <main class="board-content">
+            <div class="board-header">
+                <h2>시험 후기 게시판</h2>
+                <p class="board-sub">다른 학우들의 시험정보를 참고하고, 나의 시험도 공유해보아요</p>
+            </div>
+
+            <div class="search-section">
+                <form method="get" action="{% url 'TestBack:test_list' %}" class="search-form">
+                    <div class="search-input-wrapper">
+                        <input type="text" name="search" value="{{ search_keyword }}" placeholder="제목, 과목명, 내용을 입력하세요.">
+                        <button type="submit" class="btn-search">
+                            <img src="{% static 'img/material-symbols_search.svg' %}"  width="22">
+                        </button>
+                    </div>
+                    <input type="hidden" name="sort" value="{{ sort }}">
+                </form>
+                <a href="{% url 'TestBack:test_create' %}" class="btn-write">후기 작성하기</a>
+            </div>
+
+            <div class="filter-tabs">
+                <a class="tab-btn1">전체</a>
+                <a href="?sort=latest&search={{ search_keyword }}" class="tab-btn {% if sort == 'latest' or not sort %}active{% endif %}"
+                style="text-decoration: none; border-bottom: none;">최신순 <span>▼</span></a>
+                <a href="?sort=likes&search={{ search_keyword }}" class="tab-btn {% if sort == 'likes' %}active{% endif %}"
+                style="text-decoration: none; border-bottom: none;">추천순</a>
+            </div>
+
+            {% if page_obj %}
+                <table class="board-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">번호</th>
+                            <th>제목</th>
+                            <th style="width: 120px;">작성자</th>
+                            <th style="width: 150px;">과목</th>
+                            <th style="width: 110px;">작성일</th>
+                            <th style="width: 80px;">좋아요</th>
+                            <th style="width: 80px;">조회수</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="notice-row" >
+                            <td class="txt-center">공지</td>
+                            <td><a href="#" class="txt-center">시험후기 작성 가이드라인</a></td>
+                            <td class="txt-center">관리자</td>
+                            <td class="txt-center">-</td>
+                            <td class="txt-center text-muted">2023.03.05</td>
+                            <td class="txt-center">-</td>
+                            <td class="txt-center text-muted">1024</td>
+                        </tr>
+
+                        {% for test in page_obj %}
+                        <tr>
+                            <td class="txt-center text-muted">{{ test.pk }}</td>
+                            <td>
+                                <a href="{% url 'TestBack:test_detail' test.pk %}">{{ test.title }}</a>
+                            </td>
+                            <td class="txt-center">{{ test.user.username }}</td>
+                            <td class="txt-center">{{ test.course.subject }}</td>
+                            <td class="txt-center text-muted">{{ test.created_at|date:"Y.m.d" }}</td>
+                            <td class="txt-center text-danger">
+                                <img src="{% static 'img/mdi_heart.svg' %}"  width="15">
+                            {{ test.likes.count }}</td>
+                            <td class="txt-center text-muted">{{ test.views }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            {% else %}
+                <div class="empty-container">
+                    <a href="{% url 'TestBack:test_create' %}" class="empty-box">
+                        <img src="{% static 'img/Vector.svg' %}" class="empty-icon" width="40">
+                        <p class="empty-title">등록된 게시글이 없습니다</p>
+                        <p class="empty-sub">첫번째 후기를 작성해 보세요!</p>
+                    </a>
+                </div>
+            {% endif %}
+            
+            {% if page_obj.paginator.num_pages > 1 %}
+            <div class="pagination">
+    
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}&sort={{ sort }}&search={{ search_keyword }}">
+                        <button type="button" class="page-arrow">
+                            <img src="{% static 'img/weui_arrow-filled (1).svg' %}" width="10">
+                        </button>
+                    </a>
+                {% else %}
+                    <button type="button" class="page-arrow" disabled style="opacity: 0.3; cursor: not-allowed;">
+                        <img src="{% static 'img/weui_arrow-filled (1).svg' %}" width="10">
+                    </button>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <a href="?page={{ num }}&sort={{ sort }}&search={{ search_keyword }}">
+                            <button type="button" class="page-num active">{{ num }}</button>
+                        </a>
+                    {% else %}
+                        <a href="?page={{ num }}&sort={{ sort }}&search={{ search_keyword }}">
+                            <button type="button" class="page-num">{{ num }}</button>
+                        </a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}&sort={{ sort }}&search={{ search_keyword }}">
+                        <button type="button" class="page-arrow1">
+                            <img src="{% static 'img/weui_arrow-filled (1).svg' %}" width="10">
+                        </button>
+                    </a>
+                {% else %}
+                    <button type="button" class="page-arrow1" disabled style="opacity: 0.3; cursor: not-allowed;">
+                        <img src="{% static 'img/weui_arrow-filled (1).svg' %}" width="10">
+                    </button>
+                {% endif %}
+
+            </div>
+            {% endif %}
+        </main>
+    </div>
+
+</body>
 </html>

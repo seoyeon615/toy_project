@@ -1,4 +1,4 @@
-<!doctype html>
+{% comment %} <!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
@@ -106,5 +106,190 @@
             </p>
         </form>
     </body>
-</html>
+</html> {% endcomment %}
 
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>멋사대학교 - 시험후기 작성하기</title>
+    <link rel="stylesheet" href="{% static 'css/reviewWrite.css' %}">
+    <script src="{% static 'js/reviewWrite.js' %}" defer></script>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <img src="{% static 'img/1968aca1-6184-4799-a8ac-c3e90184cdc8 1.svg' %}" clss="logo-icon" width="170">
+                <!-- <span class="logo-icon">🦁</span> <strong>멋사대학교</strong> -->
+            </div>
+            <nav class="nav-links">
+                <a href="#" class="active">게시판</a>
+                <a href="#">강의실</a>
+                <a href="#">시간표</a>
+                <a href="#">학점계산기</a>
+            </nav>
+            <div class="nav-icons">
+                {% if user.is_authenticated %}
+                    <span style="font-size: 14px; font-weight: 500; margin-right: 5px;">
+                        {{ user.username }} 님</span>
+                    <a href="{% url 'users:logout' %}" style="font-size: 13px; color: #8E8E8E; text-decoration: none; margin-right: 15px;">로그아웃</a>
+                {% else %}
+                    <a href="{% url 'users:login' %}" style="font-size: 13px; color: #555; text-decoration: none; margin-right: 10px;">로그인</a>
+                    <a href="{% url 'users:signup' %}" style="font-size: 13px; color: #555; text-decoration: none; margin-right: 15px;">회원가입</a>
+                {% endif %}
+                <!-- <span class="icon-bell">🔔</span>
+                <span class="icon-user">👤</span> -->
+                <div><img src="{% static 'img/fluent_alert-48-regular.svg' %}"  width="25"></div>
+                <div><img src="{% static 'img/material-symbols_person.svg' %}"   width="25"></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="back-button-container">
+            <button type="button" class="btn-back" onclick="history.back();">
+                <img src="{% static 'img/weui_arrow-filled.svg' %}"  width="10">
+                목록으로
+            </button>
+        </div>
+
+        <section class="form-header">
+            <h2>시험후기 {% if test %}수정하기{% else %}작성하기{% endif %}
+                <span class="edit-icon">
+                    <img src="{% static 'img/icon-park-outline_write.svg' %}"  width="23">
+                </span>
+            </h2>
+        </section>
+
+        <form action="" method="post" class="review-form">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="course_name">과목명 *</label>
+                    <input type="text" id="course_name" name="subject"
+                    value="{{ test.course.subject|default:'' }}" placeholder="과목명을 입력하세요." required>
+                </div>
+
+                <div class="form-group">
+                    <label for="professor">교수님 *</label>
+                    <input type="text" id="professor" name="professor"
+                    value="{{ test.course.professor|default:'' }}" placeholder="입력하세요." required>
+                </div>
+
+                <div class="form-group">
+                    <label for="exam_type">시험종류 *</label>
+                    <input type="text" id="exam_type" name="exam_type"
+                    value="{{ test.exam_type|default:'' }}" placeholder="ex) 중간고사" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="exam_format">시험유형 *</label>
+                    <input type="text" id="exam_format" name="test_format"
+                    value="{{ test.test_format|default:'' }}" placeholder="ex) 객관식/주관식" required>
+                </div>
+            </div>
+
+            <div class="form-group-full rating-container">
+                <label>난이도 *</label>
+                <input type="hidden" id="difficulty" name="rating"
+                    value="{{ test.rating|default:3 }}" value="">
+                
+                <div class="star-rating">
+                    <span class="star" data-value="1">☆</span>
+                    <span class="star" data-value="2">☆</span>
+                    <span class="star" data-value="3">☆</span>
+                    <span class="star" data-value="4">☆</span>
+                    <span class="star" data-value="5">☆</span>
+                </div>
+
+                {% comment %} <div class="form-group rating-container">
+    <label>난이도 *</label>
+    
+    <div class="star-rating">
+        <span class="star-icon" data-value="1">☆</span>
+        <span class="star-icon" data-value="2">☆</span>
+        <span class="star-icon" data-value="3">☆</span>
+        <span class="star-icon" data-value="4">☆</span>
+        <span class="star-icon" data-value="5">☆</span>
+    </div>
+
+    <input type="hidden" name="difficulty" id="difficulty-score" value="0">
+</div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const stars = document.querySelectorAll('.star-icon');
+        const scoreInput = document.getElementById('difficulty-score');
+
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                const selectedValue = star.getAttribute('data-value');
+                
+                
+                if (scoreInput) {
+                    scoreInput.value = selectedValue;
+                }
+
+                
+                stars.forEach(s => {
+                    if (s.getAttribute('data-value') <= selectedValue) {
+                        s.innerText = '★';
+                        s.classList.add('filled'); 
+                    } else {
+                        s.innerText = '☆';
+                        s.classList.remove('filled');
+                    }
+                });
+            });
+        });
+    });
+    </script> {% endcomment %}
+                {% comment %} <input
+                    type="number"
+                    name="rating"
+                    value="{{ test.rating|default:3 }}"
+                    min="1"
+                    max="5"
+                    placeholder="1부터 5사이 숫자로 입력"
+                    required
+                /> {% endcomment %}
+            </div>
+
+            <div class="form-group-full">
+                <label for="title">제목 *</label>
+                <input type="text" id="title" name="title"
+                    value="{{ test.title|default:'' }}" maxlength="100" placeholder="제목을 입력하세요. (최대 100자)" required>
+            </div>
+
+            <div class="form-group-full">
+                <label for="content">총평 *</label>
+                <div class="textarea-wrapper">
+                    <textarea id="content" name="content" maxlength="1000" placeholder="최대 1000자까지 입력 가능합니다." required></textarea>
+                    <span class="char-count"><span id="current-chars">0</span>/1000</span>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="btn-cancel" onclick="history.back();">{% if test %}
+                <a href="{% url 'TestBack:test_detail' test.pk %}" style="text-decoration:none; color: black;">취소</a>
+                {% else %}
+                <a href="{% url 'TestBack:test_list' %}" style="text-decoration:none; color: black;">취소</a>
+                {% endif %}</button>
+                <button type="submit" class="btn-submit">
+                    {% if test %}
+                    수정완료
+                    {% else %}
+                    작성완료
+                    {% endif %}
+                </button>
+            </div>
+        </form>
+    </main>
+
+</body>
+</html>

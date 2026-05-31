@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>멋사대학교 - 시험 후기 게시판</title>
+    <link rel="stylesheet" href="../css/reviewList.css">
+    <script src="../js/reviewList.js" defer></script>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon">🦁</span> <strong>멋사대학교</strong>
+            </div>
+            <nav class="nav-links">
+                <a href="#" class="active">게시판</a>
+                <a href="#">강의실</a>
+                <a href="#">시간표</a>
+                <a href="#">학점계산기</a>
+            </nav>
+            <div class="nav-icons">
+                <span class="icon-bell">🔔</span>
+                <span class="icon-user">👤</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        
+        <aside class="sidebar">
+            <h3 class="sidebar-title">게시판 <span class="arrow-down">▼</span></h3>
+            <ul class="sidebar-menu">
+                <li><a href="#">교수님 후기</a></li>
+                <li class="active"><a href="#">시험 후기</a></li>
+                <li><a href="#">강의 후기</a></li>
+                <li><a href="#">질의응답</a></li>
+            </ul>
+        </aside>
+
+        <main class="board-content">
+            <div class="board-header">
+                <h2>시험 후기 게시판</h2>
+                <p class="board-sub">다른 학우들의 시험정보를 참고하고, 나의 시험도 공유해보아요</p>
+            </div>
+
+            <div class="search-section">
+                <form action="" method="GET" class="search-form">
+                    <div class="search-input-wrapper">
+                        <input type="text" name="q" placeholder="제목, 과목명, 내용을 입력하세요.">
+                        <button type="submit" class="btn-search">🔍</button>
+                    </div>
+                </form>
+                <a href="./reviewWrite.html" class="btn-write">후기 작성하기</a>
+            </div>
+
+            <div class="filter-tabs">
+                <button type="button" class="tab-btn active" data-filter="all">전체</button>
+                <button type="button" class="tab-btn" data-filter="latest">최신순 <span>▼</span></button>
+                <button type="button" class="tab-btn" data-filter="recommend">추천순</button>
+            </div>
+
+            <table class="board-table">
+                <thead>
+                    <tr>
+                        <th style="width: 8%;">번호</th>
+                        <th style="width: 40%;">제목</th>
+                        <th style="width: 12%;">작성자</th>
+                        <th style="width: 15%;">과목</th>
+                        <th style="width: 13%;">작성일</th>
+                        <th style="width: 12%;">좋아요</th>
+                        <th style="width: 10%;">조회수</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="notice-row">
+                        <td class="txt-center font-bold">공지</td>
+                        <td class="font-bold"><a href="#">시험후기 작성 가이드라인</a></td>
+                        <td class="txt-center">관리자</td>
+                        <td class="txt-center">-</td>
+                        <td class="txt-center text-muted">2023.03.05</td>
+                        <td class="txt-center">-</td>
+                        <td class="txt-center text-muted">1024</td>
+                    </tr>
+                    <tr>
+                        <td class="txt-center text-muted">950</td>
+                        <td><a href="#">2025 uiux 기말고사 후기</a></td>
+                        <td class="txt-center">김현수</td>
+                        <td class="txt-center">UIUX</td>
+                        <td class="txt-center text-muted">2026.03.05</td>
+                        <td class="txt-center text-danger">❤️ 7</td>
+                        <td class="txt-center text-muted">15</td>
+                    </tr>
+                    <tr>
+                        <td class="txt-center text-muted">949</td>
+                        <td><a href="#">회계원리 중간고사 난이도</a></td>
+                        <td class="txt-center">이영희</td>
+                        <td class="txt-center">회계원리</td>
+                        <td class="txt-center text-muted">2026.02.03</td>
+                        <td class="txt-center text-danger">❤️ 9</td>
+                        <td class="txt-center text-muted">20</td>
+                    </tr>
+                    <tr>
+                        <td class="txt-center text-muted">948</td>
+                        <td><a href="#">데이터베이스 퀴즈 후기</a></td>
+                        <td class="txt-center">김도현</td>
+                        <td class="txt-center">데이터사이언스</td>
+                        <td class="txt-center text-muted">2025.12.16</td>
+                        <td class="txt-center text-danger">❤️ 4</td>
+                        <td class="txt-center text-muted">17</td>
+                    </tr>
+                    <tr>
+                        <td class="txt-center text-muted">947</td>
+                        <td><a href="#">C언어 기말고사 후기</a></td>
+                        <td class="txt-center">김정우</td>
+                        <td class="txt-center">C언어</td>
+                        <td class="txt-center text-muted">2025.12.05</td>
+                        <td class="txt-center text-danger">❤️ 10</td>
+                        <td class="txt-center text-muted">36</td>
+                    </tr>
+                    <tr>
+                        <td class="txt-center text-muted">946</td>
+                        <td><a href="#">확률과통계 중간고사 후기</a></td>
+                        <td class="txt-center">이지안</td>
+                        <td class="txt-center">확률과통계</td>
+                        <td class="txt-center text-muted">2025.09.13</td>
+                        <td class="txt-center text-danger">❤️ 27</td>
+                        <td class="txt-center text-muted">45</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                <button type="button" class="page-arrow">&lt;</button>
+                <button type="button" class="page-num active">1</button>
+                <button type="button" class="page-num">2</button>
+                <button type="button" class="page-num">3</button>
+                <button type="button" class="page-num">4</button>
+                <button type="button" class="page-num">5</button>
+                <button type="button" class="page-arrow">&gt;</button>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>

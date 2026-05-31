@@ -1,0 +1,207 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>시험 후기 게시물</title>
+    <link rel="stylesheet" href="{% static 'css/reviewDetail.css' %}">
+</head>
+<body>
+    <header class="header">
+        <img class="logo-img" src="../img/logo.svg" alt="로고 이미지">
+        <div class="banner">
+            <span class="current-banner">게시판</span>
+            <span class="other-banner">강의실</span>
+            <span class="other-banner">시간표</span>
+            <span class="other-banner">학점계산기</span>
+        </div>
+        <div class="users-menu">
+            <img class="alert" src="../img/alert.svg" alt="알림 이미지">
+            <img class="profile-picture" src="../img/profile_pic.svg" alt="프로필 사진">
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="section">
+            <article class="post">
+                <div class="post-header">
+                    <div class="title">{{ post.title }}</div>
+
+                    <div class="post-details">
+                        <div class="writer-info">
+                            <span>C언어</span> 
+                            <span>{{ post.author.nickname }}</span>
+                            <span>2학년</span>
+                            <span>{{ post.created_at|naturaltime }}</span>
+                            <span>조회 36</span>
+                        </div>
+                        {% if request.user == post.author %}
+                        <div class="modifies">
+                            <span class="modify">수정하기</span>
+                            <span class="delete" onclick="openDeleteModal('post', {{ post.id }})">삭제하기</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="post-content">
+                    <div class="difficulty">
+                        <div class="heading">시험 난이도</div>
+                        <div class="rating">⭐️⭐️⭐️⭐️☆ (4.0 / 5.0)</div>
+                        <div class="text">
+                            <span>중간고사보다 구현 문제가 까다롭게 나왔고, 포인터와 함수 응용 문제가 생각보다 어렵게 느껴졌습니다.</span>
+                            <span>특히 코드 실행 결과를 묻는 문제가 많아서 단순 암기보다 흐름 이해가 중요했어요.</span>
+                        </div>
+                    </div>
+                    <div class="type">
+                        <div class="heading">시험 유형</div>
+                        <div class="text">
+                            <span>객관식 40%</span>
+                            <span>단답형 20%</span>
+                            <span>코드 작성 및 디버깅 40%</span>
+                        </div>
+                    </div>
+                    <div class="overall">
+                        <div class="heading">총평</div>
+                        <div class="overall-text">
+                            <div>전체적으로 수업에서 강조하신 예제 위주로 출제되었습니다. 다만 배열, 포인터, 문자열을 함께 사용하는 문제가 많이 나와서 기초 문법만 공부했다면 조금 어려울 수 있을 것 같아요.</div>
+                            <div>주요 출제 내용: 포인터와 배열 관계, 함수 호출 과정, 반복문 활용 문제, 코드 오류 수정</div>
+                        </div>
+                    </div>
+                    <div class="btns">
+                        <div class="like">
+                            <img src="../img/like.svg" alt="좋아요">
+                            <span class="btn-text">좋아요 {{ test.likes.count }}</span>
+                        </div>
+                        <div class="scrap">
+                            <img src="../img/scrap.svg" alt="스크랩">
+                            <span class="btn-text">스크랩 {{ test.scraps.count }}</span>
+                        </div>
+                        <div class="share">
+                            <img src="../img/share.svg" alt="공유하기">
+                            <span class="btn-text">공유하기</span>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <article class="post-comments">
+                <div class="comment-heading">
+                    <span>댓글</span>
+                    <span class="comment-count">{{ post.comments.count }}</span>
+                </div>
+
+                {% for comment in post.comments.all %}
+                <div class="single-comment">
+                    <img class="profile-pic" src="../img/profile_pic.svg" alt="프로필 사진">
+                    <div class="comment-text">
+                        <span class="anonym">{{ comment.author.nickname }}</span>
+                        <p class="comment">{{ comment.content }}</p>
+                        <div class="comment-info">
+                            <span class="comment-time">{{ comment.created_at|naturaltime }}</span>
+                            <div class="comment-like">
+                                <img class="comment-like-img" src="../img/comment_like.svg" alt="댓글 좋아요">
+                                <span class="comment-like-count">0</span> </div>
+                        </div>
+                    </div>
+                </div>
+
+                    {% for reply in comment.replies.all %}
+                    <div class="single-reply">
+                        <img class="profile-pic" src="../img/profile_pic.svg" alt="프로필 사진">
+                        <div class="reply">
+                            <div class="reply-bar">
+                                <span class="anonym">{{ reply.author.nickname }}</span>
+                                {% if request.user == reply.author %}
+                                <div class="reply-modifies">
+                                    <span class="reply-modify">수정하기</span>
+                                    <span class="reply-delete" onclick="openDeleteModal('comment', {{ reply.id }})">삭제하기</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <p class="comment">{{ reply.content }}</p>
+                            <div class="comment-info">
+                                <span class="comment-time">{{ reply.created_at|naturaltime }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% empty %}
+                <div class="none">
+                    <img class="none-img" src="../img/none_icon.svg" alt="댓글 없음 이미지">
+                    <div class="require">첫 댓글을 남겨주세요.</div>
+                </div>
+                {% endfor %}
+                <form method="POST" action="{% url 'posts:add_comment' post.pk %}" class="new-comment-wrap">
+                    {% csrf_token %}
+                    <div class="new-comment">
+                        <input type="text" class="input" placeholder="댓글을 입력하세요." name="content">
+                        <div class="whether-anonym">
+                            <input type="checkbox" class="anonym-check" name="is_anonymous">
+                            <span class="anonym-text">익명</span>
+                        </div>
+                    </div>
+                    <button type="submit" class="submit">등록</button>
+                </form>
+            </article>
+        </section>
+
+        <aside class="aside">
+            <p class="more">내가 쓴 다른 글</p>
+
+            <div class="single-article">
+                <div class="aside-article">
+                    <div class="aside-title">자료구조 중간고사 정리본</div>
+                    <div class="aside-info">
+                        <span class="aside-time">2025.10.05  14:30</span>
+                        <span>조회 36</span>
+                    </div>
+                </div>
+                <img class="aside-arrow" src="../img/aside_arrow.svg" alt="화살표">
+            </div>
+
+            <div class="single-article">
+                <div class="aside-article">
+                    <div class="aside-title">프로그래밍 심화 퀴즈 후기</div>
+                    <div class="aside-info">
+                        <span class="aside-time">2025.09.05  20:30</span>
+                        <span>조회 36</span>
+                    </div>
+                </div>
+                <img class="aside-arrow" src="../img/aside_arrow.svg" alt="화살표">
+            </div>
+            
+            <div class="single-article">
+                <div class="aside-article">
+                    <div class="aside-title">UIUX 심화 퀴즈 후기</div>
+                    <div class="aside-info">
+                        <span class="aside-time">2025.09.05  20:30</span>
+                        <span>조회 36</span>
+                    </div>
+                </div>
+                <img class="aside-arrow" src="../img/aside_arrow.svg" alt="화살표">
+            </div>
+
+            <button type="button" class="aside-button">더보기</button>
+        </aside>
+    </div>
+
+
+
+
+    <div class="delete-modal-wrap">
+        <div class="modal-content">
+            <img src="../img/warning.svg" alt="경고" class="modal-warning-icon">
+            <h3>게시글을 삭제하시겠습니까?</h3>
+            <p class="modal-desc">삭제된 게시글은 복구할 수 없습니다.</p>
+            <div class="modal-btns">
+                <button type="button" class="btn-cancel" onclick="closeDeleteModal()">취소</button>
+                <button type="button" class="btn-delete" onclick="confirmDelete()">삭제</button>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'js/reviewDetail.js' %}"></script>
+</body>
+</html>

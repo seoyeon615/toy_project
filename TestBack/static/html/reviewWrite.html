@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>멋사대학교 - 시험후기 작성하기</title>
+    <link rel="stylesheet" href="../css/reviewWrite.css">
+    <script src="../js/reviewWrite.js" defer></script>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon">🦁</span> <strong>멋사대학교</strong>
+            </div>
+            <nav class="nav-links">
+                <a href="#" class="active">게시판</a>
+                <a href="#">강의실</a>
+                <a href="#">시간표</a>
+                <a href="#">학점계산기</a>
+            </nav>
+            <div class="nav-icons">
+                <span class="icon-bell">🔔</span>
+                <span class="icon-user">👤</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="back-button-container">
+            <button type="button" class="btn-back" onclick="history.back();">&lt; 목록으로</button>
+        </div>
+
+        <section class="form-header">
+            <h2>시험후기 작성하기 <span class="edit-icon">✏️</span></h2>
+        </section>
+
+        <form action="" method="POST" class="review-form">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="course_name">과목명 *</label>
+                    <input type="text" id="course_name" name="course_name" placeholder="과목명을 입력하세요." required>
+                </div>
+
+                <div class="form-group">
+                    <label for="professor">교수님 *</label>
+                    <input type="text" id="professor" name="professor" placeholder="입력하세요." required>
+                </div>
+
+                <div class="form-group">
+                    <label for="exam_type">시험종류 *</label>
+                    <input type="text" id="exam_type" name="exam_type" placeholder="ex) 중간고사" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="exam_format">시험유형 *</label>
+                    <input type="text" id="exam_format" name="exam_format" placeholder="ex) 객관식/주관식" required>
+                </div>
+            </div>
+
+            <div class="form-group-full rating-container">
+                <label>난이도 *</label>
+                <input type="hidden" id="difficulty" name="difficulty" value="">
+                
+                <div class="star-rating">
+                    <span class="star" data-value="1">☆</span>
+                    <span class="star" data-value="2">☆</span>
+                    <span class="star" data-value="3">☆</span>
+                    <span class="star" data-value="4">☆</span>
+                    <span class="star" data-value="5">☆</span>
+                </div>
+            </div>
+
+            <div class="form-group-full">
+                <label for="title">제목 *</label>
+                <input type="text" id="title" name="title" maxlength="100" placeholder="제목을 입력하세요. (최대 100자)" required>
+            </div>
+
+            <div class="form-group-full">
+                <label for="content">총평 *</label>
+                <div class="textarea-wrapper">
+                    <textarea id="content" name="content" maxlength="1000" placeholder="최대 1000자까지 입력 가능합니다." required></textarea>
+                    <span class="char-count"><span id="current-chars">0</span>/1000</span>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="btn-cancel" onclick="history.back();">취소</button>
+                <button type="submit" class="btn-submit">작성완료</button>
+            </div>
+        </form>
+    </main>
+
+</body>
+</html>

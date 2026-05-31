@@ -32,6 +32,7 @@ jobs:
                         pip install --upgrade pip
                         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
                         python manage.py migrate --noinput
+                        python manage.py collectstatic --noinput  # 추가: 정적 파일 수집
                       fi
 
                       # 3) 서비스 재시작

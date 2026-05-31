@@ -192,38 +192,23 @@
         <aside class="aside">
             <p class="more">내가 쓴 다른 글</p>
 
+            {% for my_post in author_other_tests %}
             <div class="single-article">
                 <div class="aside-article">
-                    <div class="aside-title">자료구조 중간고사 정리본</div>
+                    <div class="aside-title">{{ my_post.title }}</div>
                     <div class="aside-info">
-                        <span class="aside-time">2025.10.05  14:30</span>
-                        <span>조회 36</span>
+                        <span class="aside-time">{{ my_post.created_at|date:"Y.m.d H:i" }}</span>
+                        <span>조회 {{ my_post.views }}</span>
                     </div>
                 </div>
-                <img class="aside-arrow" src={% static "img/aside_arrow.svg" %} alt="화살표">
-            </div>
-
-            <div class="single-article">
-                <div class="aside-article">
-                    <div class="aside-title">프로그래밍 심화 퀴즈 후기</div>
-                    <div class="aside-info">
-                        <span class="aside-time">2025.09.05  20:30</span>
-                        <span>조회 36</span>
-                    </div>
-                </div>
-                <img class="aside-arrow" src={% static "img/aside_arrow.svg" %} alt="화살표">
+                <img class="aside-arrow" src="{% static 'img/aside_arrow.svg' %}" alt="화살표">
             </div>
             
+            {% empty %}
             <div class="single-article">
-                <div class="aside-article">
-                    <div class="aside-title">UIUX 심화 퀴즈 후기</div>
-                    <div class="aside-info">
-                        <span class="aside-time">2025.09.05  20:30</span>
-                        <span>조회 36</span>
-                    </div>
-                </div>
-                <img class="aside-arrow" src={% static "img/aside_arrow.svg" %} alt="화살표">
+                <div class="aside-title">아직 작성한 다른 글이 없습니다.</div>
             </div>
+            {% endfor %}
 
             <button type="button" class="aside-button">더보기</button>
         </aside>

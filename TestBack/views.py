@@ -133,7 +133,7 @@ def comment_create(request, pk):
     if request.method == 'POST':
         content = request.POST.get('content')
         is_anonymous = request.POST.get('is_anonymous') == 'on'
-        parent_id = request.POST.get('parent_id')  # 대댓글이면 값 있음
+        parent_id = request.POST.get('parent_id') 
 
         Comment.objects.create(
             test=test,

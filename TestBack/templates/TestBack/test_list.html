@@ -47,11 +47,11 @@
                     <th>조회수</th>
                 </tr>
             </thead>
-            <tbody>
-                {% for test in page_obj %}
-                <tr>
-                    <td>{{ test.pk }}</td>
-                    <td>
+            {% for test in page_obj %}
+            <tr>
+                <td>{{ forloop.counter }}</td> <td>
+                    <a href="{% url 'TestBack:test_detail' test.pk %}">{{ test.title }}</a>
+                </td>
                         <a href="{% url 'TestBack:test_detail' test.pk %}"
                             >{{ test.title }}</a
                         >

@@ -21,7 +21,6 @@ class Test(models.Model):
     content = models.TextField(help_text="총평 및 내용")
     views = models.PositiveIntegerField(default=0, help_text="조회수")
     
-    # settings.AUTH_USER_MODEL을 쓰고 계셔서 유저 클래스를 지워도 아무 문제 없이 작동합니다!
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='tests', help_text="작성자")
     created_at = models.DateTimeField(auto_now_add=True, help_text="작성일시")
 

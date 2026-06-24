@@ -106,7 +106,7 @@
     <header class="navbar">
         <div class="nav-container">
             <div class="logo">
-                <img src="{% static 'img/1968aca1-6184-4799-a8ac-c3e90184cdc8 1.svg' %}" clss="logo-icon" width="170">
+                <img src="{% static 'img/1968aca1-6184-4799-a8ac-c3e90184cdc8 1.svg' %}" class="logo-icon" width="170">
             </div>
             <nav class="nav-links">
                 <a href="#" class="active">게시판</a>
@@ -166,6 +166,8 @@
                 style="text-decoration: none; border-bottom: none;">최신순 <span>▼</span></a>
                 <a href="?sort=likes&search={{ search_keyword }}" class="tab-btn {% if sort == 'likes' %}active{% endif %}"
                 style="text-decoration: none; border-bottom: none;">추천순</a>
+                <a href="?sort=views&search={{ search_keyword }}" class="tab-btn {% if sort == 'views' %}active{% endif %}"
+                style="text-decoration: none; border-bottom: none;">조회순</a>
             </div>
 
             {% if page_obj %}
@@ -194,7 +196,7 @@
 
                         {% for test in page_obj %}
                         <tr>
-                            <td class="txt-center text-muted">{{ test.pk }}</td>
+                            <td class="txt-center text-muted">{{ page_obj.start_index|add:forloop.counter0 }}</td>
                             <td>
                                 <a href="{% url 'TestBack:test_detail' test.pk %}">{{ test.title }}</a>
                             </td>

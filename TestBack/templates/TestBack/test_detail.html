@@ -9,7 +9,7 @@
 </head>
 <body>
     <header class="header">
-        <img class="logo-img" src={% static 'img/logo.svg' %} alt="로고 이미지">
+        <img class="logo-img" src="{% static 'img/logo.svg' %}" alt="로고 이미지">
         <div class="banner">
             <span class="current-banner">게시판</span>
             <span class="other-banner">강의실</span>
@@ -17,8 +17,8 @@
             <span class="other-banner">학점계산기</span>
         </div>
         <div class="users-menu">
-            <img class="alert" src={% static "img/alert.svg" %} alt="알림 이미지">
-            <img class="profile-picture" src={% static "img/profile_pic.svg" %} alt="프로필 사진">
+            <img class="alert" src="{% static 'img/alert.svg' %}" alt="알림 이미지">
+            <img class="profile-picture" src="{% static 'img/profile_pic.svg' %}" alt="프로필 사진">
         </div>
     </header>
 
@@ -47,7 +47,7 @@
                             
                             <form id="delete-form-post-{{ test.pk }}" action="{% url 'TestBack:test_delete' test.pk %}" method="post" style="margin: 0; padding: 0;">
                                 {% csrf_token %}
-                                <button type="button" class="delete" onclick="openDeleteModal('post', {{ test.pk }})" style="background: none; font-family: inherit;">삭제하기</button>
+                                <button onclick="toggleReplyForm('{{ comment.id }}')">대댓글</button>
                             </form>
                         </div>
                         {% endif %}
@@ -107,7 +107,7 @@
                             </span>
                             
                             <div class="comment-actions">
-                                <button type="button" class="action-btn" onclick="toggleReplyForm({{ comment.id }})">대댓글</button>
+                                <button type="button" class="action-btn" onclick="toggleReplyForm('{{ comment.id }}')">대댓글</button>
                                 
                                 {% if request.user == comment.user %}
                                 <span class="action-btn">수정하기</span> 
@@ -221,7 +221,7 @@
 
     <div class="delete-modal-wrap">
         <div class="modal-content">
-            <img src={% static "img/warning.svg" %} alt="경고" class="modal-warning-icon">
+            <img src="{% static 'img/warning.svg' %}" alt="경고" class="modal-warning-icon">
             <div class="warning-q">게시글을 삭제하시겠습니까?</div>
             <div class="modal-desc">삭제된 게시글은 복구할 수 없습니다.</div>
             <div class="modal-btns">
@@ -253,7 +253,7 @@
         {% endif %}
     </p>
 
-    <p><a href="{% url 'TestBack:test_list' %}">&lt; 목록으로</a></p>
+    <p><a href="{% url 'testback:test_list' %}">&lt; 목록으로</a></p>
 
     <h1>{{ test.title }}</h1>
     <p>

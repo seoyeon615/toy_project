@@ -95,6 +95,8 @@ def test_list(request):
         
     if sort == 'likes':
         tests = tests.annotate(like_count=Count('likes')).order_by('-like_count', '-created_at')
+    elif sort == 'views':
+        tests = tests.annotate(like_count=Count('likes')).order_by('-views', '-created_at')
     else:
         tests = tests.annotate(like_count=Count('likes')).order_by('-created_at')
         

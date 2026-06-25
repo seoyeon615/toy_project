@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabButtons = document.querySelectorAll('.tab-btn');
 
     /* ==========================================================
-       ✨ 디폴트 설정 추가: 페이지 로드 시 '최신순' 버튼을 찾아 active 적용
+        ✨ 디폴트 설정 추가: 페이지 로드 시 '최신순' 버튼을 찾아 active 적용
        ========================================================== */
     // data-filter 속성이 'latest'인 버튼을 찾거나, 없으면 첫 번째 버튼을 기본으로 잡습니다.
     const defaultTab = document.querySelector('.tab-btn[data-filter="latest"]') || tabButtons[0];

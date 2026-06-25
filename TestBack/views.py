@@ -4,6 +4,9 @@ from django.core.paginator import Paginator
 from django.db.models import Count, Q
 from .models import Test, Course, Comment
 
+from django.db import IntegrityError
+from django.http import HttpResponse
+
 @login_required
 def test_create(request):
     if request.method == 'POST':
@@ -20,17 +23,26 @@ def test_create(request):
             professor=professor_name,
             defaults={'course_number': f"TEMP_{subject_name}"}
         )
-        
-        test = Test.objects.create(
-            course=course,
-            exam_type=exam_type,
-            test_format=test_format,
-            rating=int(rating),
-            title=title,
-            content=content,
-            user=request.user
-        )
-        return redirect('TestBack:test_detail', pk=test.pk)
+        try:
+            test = Test.objects.create(
+                course=course,
+                exam_type=exam_type,
+                test_format=test_format,
+                rating=int(rating),
+                title=title,
+                content=content,
+                user=request.user
+            )
+            return redirect('TestBack:test_detail', pk=test.pk)
+            
+        except IntegrityError:
+            response_html = """
+            <script>
+                alert("⚠️ 이미 등록된 시험 정보이거나 중복된 데이터가 존재합니다.");
+                history.back();
+            </script>
+            """
+            return HttpResponse(response_html)
         
     return render(request, 'TestBack/test_form.html')
 
@@ -113,6 +125,11 @@ def test_list(request):
 @login_required
 def test_like(request, pk):
     test = get_object_or_404(Test, pk=pk)
+    
+    if test.user == request.user:
+        response_html = "<script>alert('❌ 본인 글에는 좋아요를 누를 수 없습니다.');history.back();</script>"
+        return HttpResponse(response_html)
+        
     if test.likes.filter(id=request.user.id).exists():
         test.likes.remove(request.user)
     else:
@@ -122,6 +139,11 @@ def test_like(request, pk):
 @login_required
 def test_scrap(request, pk):
     test = get_object_or_404(Test, pk=pk)
+    
+    if test.user == request.user:
+        response_html = "<script>alert('❌ 본인 글은 스크랩할 수 없습니다.');history.back();</script>"
+        return HttpResponse(response_html)
+        
     if test.scraps.filter(id=request.user.id).exists():
         test.scraps.remove(request.user)
     else:

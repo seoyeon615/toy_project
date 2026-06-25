@@ -124,8 +124,7 @@
     <header class="navbar">
         <div class="nav-container">
             <div class="logo">
-                <img src="{% static 'img/1968aca1-6184-4799-a8ac-c3e90184cdc8 1.svg' %}" clss="logo-icon" width="170">
-                <!-- <span class="logo-icon">🦁</span> <strong>멋사대학교</strong> -->
+                <img src="{% static 'img/1968aca1-6184-4799-a8ac-c3e90184cdc8 1.svg' %}" class="logo-icon" width="170">
             </div>
             <nav class="nav-links">
                 <a href="#" class="active">게시판</a>
@@ -142,8 +141,6 @@
                     <a href="{% url 'users:login' %}" style="font-size: 13px; color: #555; text-decoration: none; margin-right: 10px;">로그인</a>
                     <a href="{% url 'users:signup' %}" style="font-size: 13px; color: #555; text-decoration: none; margin-right: 15px;">회원가입</a>
                 {% endif %}
-                <!-- <span class="icon-bell">🔔</span>
-                <span class="icon-user">👤</span> -->
                 <div><img src="{% static 'img/fluent_alert-48-regular.svg' %}"  width="25"></div>
                 <div><img src="{% static 'img/material-symbols_person.svg' %}"   width="25"></div>
             </div>
@@ -196,68 +193,15 @@
 
             <div class="form-group-full rating-container">
                 <label>난이도 *</label>
-                <input type="hidden" id="difficulty" name="rating"
-                    value="{{ test.rating|default:3 }}" value="">
+                <input type="hidden" id="difficulty" name="rating" value="{{ test.rating|default:3 }}">
                 
                 <div class="star-rating">
-                    <span class="star" data-value="1">☆</span>
-                    <span class="star" data-value="2">☆</span>
-                    <span class="star" data-value="3">☆</span>
-                    <span class="star" data-value="4">☆</span>
-                    <span class="star" data-value="5">☆</span>
+                    <span class="star" data-value="1">{% if test.rating >= 1 %}★{% else %}☆{% endif %}</span>
+                    <span class="star" data-value="2">{% if test.rating >= 2 %}★{% else %}☆{% endif %}</span>
+                    <span class="star" data-value="3">{% if test.rating >= 3 or not test %}★{% else %}☆{% endif %}</span>
+                    <span class="star" data-value="4">{% if test.rating >= 4 %}★{% else %}☆{% endif %}</span>
+                    <span class="star" data-value="5">{% if test.rating == 5 %}★{% else %}☆{% endif %}</span>
                 </div>
-
-                {% comment %} <div class="form-group rating-container">
-    <label>난이도 *</label>
-    
-    <div class="star-rating">
-        <span class="star-icon" data-value="1">☆</span>
-        <span class="star-icon" data-value="2">☆</span>
-        <span class="star-icon" data-value="3">☆</span>
-        <span class="star-icon" data-value="4">☆</span>
-        <span class="star-icon" data-value="5">☆</span>
-    </div>
-
-    <input type="hidden" name="difficulty" id="difficulty-score" value="0">
-</div>
-
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const stars = document.querySelectorAll('.star-icon');
-        const scoreInput = document.getElementById('difficulty-score');
-
-        stars.forEach(star => {
-            star.addEventListener('click', () => {
-                const selectedValue = star.getAttribute('data-value');
-                
-                
-                if (scoreInput) {
-                    scoreInput.value = selectedValue;
-                }
-
-                
-                stars.forEach(s => {
-                    if (s.getAttribute('data-value') <= selectedValue) {
-                        s.innerText = '★';
-                        s.classList.add('filled'); 
-                    } else {
-                        s.innerText = '☆';
-                        s.classList.remove('filled');
-                    }
-                });
-            });
-        });
-    });
-    </script> {% endcomment %}
-                {% comment %} <input
-                    type="number"
-                    name="rating"
-                    value="{{ test.rating|default:3 }}"
-                    min="1"
-                    max="5"
-                    placeholder="1부터 5사이 숫자로 입력"
-                    required
-                /> {% endcomment %}
             </div>
 
             <div class="form-group-full">
@@ -269,23 +213,21 @@
             <div class="form-group-full">
                 <label for="content">총평 *</label>
                 <div class="textarea-wrapper">
-                    <textarea id="content" name="content" maxlength="1000" placeholder="최대 1000자까지 입력 가능합니다." required></textarea>
-                    <span class="char-count"><span id="current-chars">0</span>/1000</span>
+                    <textarea id="content" name="content" maxlength="1000" placeholder="최대 1000자까지 입력 가능합니다." required>{{ test.content|default:'' }}</textarea>
+                    <span class="char-count"><span id="current-chars">{{ test.content|length|default:0 }}</span>/1000</span>
                 </div>
             </div>
 
             <div class="button-group">
-                <button type="button" class="btn-cancel" onclick="history.back();">{% if test %}
-                <a href="{% url 'TestBack:test_detail' test.pk %}" style="text-decoration:none; color: black;">취소</a>
-                {% else %}
-                <a href="{% url 'TestBack:test_list' %}" style="text-decoration:none; color: black;">취소</a>
-                {% endif %}</button>
-                <button type="submit" class="btn-submit">
+                <button type="button" class="btn-cancel" onclick="history.back();">
                     {% if test %}
-                    수정완료
+                    <a href="{% url 'TestBack:test_detail' test.pk %}" style="text-decoration:none; color: black;">취소</a>
                     {% else %}
-                    작성완료
+                    <a href="{% url 'TestBack:test_list' %}" style="text-decoration:none; color: black;">취소</a>
                     {% endif %}
+                </button>
+                <button type="submit" class="btn-submit">
+                    {% if test %}수정완료{% else %}작성완료{% endif %}
                 </button>
             </div>
         </form>

@@ -1,239 +1,3 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>시험 후기 게시물</title>
-    <link rel="stylesheet" href="{% static 'css/reviewDetail.css' %}">
-</head>
-<body>
-    <header class="header">
-        <img class="logo-img" src="{% static 'img/logo.svg' %}" alt="로고 이미지">
-        <div class="banner">
-            <span class="current-banner">게시판</span>
-            <span class="other-banner">강의실</span>
-            <span class="other-banner">시간표</span>
-            <span class="other-banner">학점계산기</span>
-        </div>
-        <div class="users-menu">
-            <img class="alert" src="{% static 'img/alert.svg' %}" alt="알림 이미지">
-            <img class="profile-picture" src="{% static 'img/profile_pic.svg' %}" alt="프로필 사진">
-        </div>
-    </header>
-
-    <div class="container">
-        <section class="section">
-            <article class="post">
-                <div class="post-header">
-                    <div class="list-btn">
-                        <img class="list-arrow" src="{% static 'img/list_btn_arrow.svg' %}" alt="화살표">
-                        <a href="{% url 'TestBack:test_list' %}" class="to-list" style="text-decoration: none;">목록으로</a>
-                    </div>
-
-                    <div class="title">{{ test.title }}</div>
-
-                    <div class="post-details">
-                        <div class="writer-info">
-                            <span>{{ test.course.subject }}</span> 
-                            <span>{{ test.user.username }}</span>
-                            <span>{{ test.user.grade }}학년</span>
-                            <span>{{ test.created_at|date:"Y.m.d H:i" }}</span>
-                            <span>조회 {{ test.views }}</span>
-                        </div>
-                        {% if request.user == test.user %}
-                        <div class="modifies">
-                            <a href="{% url 'TestBack:test_update' test.pk %}" class="modify" style="text-decoration:none; color:inherit; align-items: center;">수정하기</a>
-                            
-                            <form id="delete-form-post-{{ test.pk }}" action="{% url 'TestBack:test_delete' test.pk %}" method="post" style="margin: 0; padding: 0;">
-                                {% csrf_token %}
-                                <button onclick="toggleReplyForm('{{ comment.id }}')">대댓글</button>
-                            </form>
-                        </div>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <div class="post-content">
-                    <div class="difficulty">
-                        <div class="heading">시험 난이도</div>
-                        <div class="rating">평점: {{ test.rating }}.0/5.0</div>
-                    </div>
-                    <div class="type">
-                        <div class="heading">시험 유형</div>
-                        <div class="text">
-                            <span>{{ test.test_format }} ({{ test.exam_type }})</span>
-                        </div>
-                    </div>
-                    <div class="overall">
-                        <div class="heading">총평</div>
-                        <div class="overall-text">
-                            <div>{{ test.content }}</div>
-                        </div>
-                    </div>
-                    
-                    <div class="btns">
-                        <a href="{% url 'TestBack:test_like' test.pk %}" class="like" style="text-decoration:none; color:inherit;">
-                            <img src="{% static 'img/like.svg' %}" alt="좋아요">
-                            <span class="btn-text">좋아요 {{ test.likes.count }}</span>
-                        </a>
-                        <a href="{% url 'TestBack:test_scrap' test.pk %}" class="scrap">
-                            <img src="{% static 'img/scrap.svg' %}" alt="스크랩">
-                            <span class="btn-text">스크랩 {{ test.scraps.count }}</span>
-                        </a>
-                        <div class="share">
-                            <img src="{% static 'img/share.svg' %}" alt="공유하기">
-                            <span class="btn-text">공유하기</span>
-                        </div>
-                    </div>
-                </div>
-            </article>
-
-            <article class="post-comments">
-                <div class="comment-heading">
-                    <span>댓글</span>
-                    <span class="comment-count">{{ test.comments.count }}</span>
-                </div>
-
-                {% for comment in test.comments.all %}
-                {% if comment.parent is None %}
-                <div class="single-comment">
-                    <img class="profile-pic" src="{% static 'img/profile_pic.svg' %}" alt="프로필 사진">
-                    <div class="comment-text">
-                        <div class="comment-header">
-                            <span class="anonym">
-                                {% if comment.is_anonymous %}익명{{ comment.get_anonymous_number }}
-                                {% else %}{{ comment.user.username }}{% if comment.user == test.user %}(작성자){% endif %}{% endif %}
-                            </span>
-                            
-                            <div class="comment-actions">
-                                <button type="button" class="action-btn" onclick="toggleReplyForm('{{ comment.id }}')">대댓글</button>
-                                
-                                {% if request.user == comment.user %}
-                                <span class="action-btn">수정하기</span> 
-                                <form action="{% url 'TestBack:comment_delete' comment.id %}" method="post" class="delete-comment-form">
-                                    {% csrf_token %}
-                                    <button type="submit" class="action-btn">삭제하기</button>
-                                </form>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <p class="comment">{{ comment.content }}</p>
-                        <div class="comment-info">
-                            <span class="comment-time">{{ comment.created_at|date:"Y.m.d H:i" }}</span>
-                            <a href="{% url 'TestBack:comment_like' comment.id %}" class="comment-like" style="text-decoration:none; color:inherit;">
-                                <img class="comment-like-img" src="{% static 'img/comment_like.svg' %}" alt="댓글 좋아요">
-                                <span class="comment-like-count">{{ comment.likes.count }}</span> 
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <form method="POST" action="{% url 'TestBack:comment_create' test.pk %}" class="new-reply-wrap" id="reply-form-{{ comment.id }}">
-                    {% csrf_token %}
-                    <input type="hidden" name="parent_id" value="{{ comment.id }}"> <div class="new-comment" style="flex-grow: 1;">
-                        <input type="text" class="input" placeholder="대댓글을 입력하세요." name="content" style="width:100%;">
-                        <div class="whether-anonym">
-                            <input type="checkbox" class="anonym-check" name="is_anonymous">
-                            <span class="anonym-text">익명</span>
-                        </div>
-                    </div>
-                    <button type="submit" class="submit">등록</button>
-                </form>
-
-                    {% for reply in comment.replies.all %}
-                    <div class="single-reply"> <img class="profile-pic" src="{% static 'img/profile_pic.svg' %}" alt="프로필 사진">
-                        <div class="reply">
-                            <div class="reply-bar">
-                                <span class="anonym">
-                                    {% if reply.is_anonymous %}익명{{ reply.get_anonymous_number }}
-                                    {% else %}{{ reply.user.username }}{% if reply.user == test.user %}(작성자){% endif %}{% endif %}
-                                </span>
-                                {% if request.user == reply.user %}
-                                <div class="reply-modifies">
-                                    <span class="action-btn">수정하기</span>
-                                    <form action="{% url 'TestBack:comment_delete' reply.id %}" method="post" class="delete-comment-form">
-                                        {% csrf_token %}
-                                        <button type="submit" class="action-btn">삭제하기</button>
-                                    </form>
-                                </div>
-                                {% endif %}
-                            </div>
-                            <p class="comment">{{ reply.content }}</p>
-                            <div class="comment-info">
-                                <span class="comment-time">{{ reply.created_at|date:"Y.m.d H:i" }}</span>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                {% endif %}
-                {% empty %}
-                <div class="none">
-                    <img class="none-img" src="{% static 'img/none_icon.svg' %}" alt="댓글 없음 이미지">
-                    <div class="require">첫 댓글을 남겨주세요.</div>
-                </div>
-                {% endfor %}
-
-                <form method="POST" action="{% url 'TestBack:comment_create' test.pk %}" class="new-comment-wrap">
-                    {% csrf_token %}
-                    <input type="hidden" name="parent_id" value="">
-                    <div class="new-comment">
-                        <input type="text" class="input" placeholder="댓글을 입력하세요." name="content">
-                        <div class="whether-anonym">
-                            <input type="checkbox" class="anonym-check" name="is_anonymous">
-                            <span class="anonym-text">익명</span>
-                        </div>
-                    </div>
-                    <button type="submit" class="submit">등록</button>
-                </form>
-            </article>
-        </section>
-
-        <aside class="aside">
-            <p class="more">이 작성자가 쓴 다른 글</p>
-
-            {% for my_post in author_other_tests %}
-            <div class="single-article">
-                <div class="aside-article">
-                    <div class="aside-title">{{ my_post.title }}</div>
-                    <div class="aside-info">
-                        <span class="aside-time">{{ my_post.created_at|date:"Y.m.d H:i" }}</span>
-                        <span>조회 {{ my_post.views }}</span>
-                    </div>
-                </div>
-                <a href="{% url 'TestBack:test_detail' my_post.pk %}">
-                    <img class="aside-arrow" src="{% static 'img/aside_arrow.svg' %}" alt="화살표">
-                </a>
-            </div>
-            
-            {% empty %}
-            <div class="single-article">
-                <div class="aside-title">아직 작성한 다른 글이 없습니다.</div>
-            </div>
-            {% endfor %}
-
-            <button type="button" class="aside-button">더보기</button>
-        </aside>
-    </div>
-
-
-
-
-    <div class="delete-modal-wrap">
-        <div class="modal-content">
-            <img src="{% static 'img/warning.svg' %}" alt="경고" class="modal-warning-icon">
-            <div class="warning-q">게시글을 삭제하시겠습니까?</div>
-            <div class="modal-desc">삭제된 게시글은 복구할 수 없습니다.</div>
-            <div class="modal-btns">
-                <button type="button" class="btn-cancel" onclick="closeDeleteModal()">취소</button>
-                <button type="button" class="btn-delete" onclick="confirmDelete()">삭제</button>
-            </div>
-        </div>
-    </div>
-    <script src="{% static 'js/reviewDetail.js' %}"></script>
-</body>
-</html>
-
 {% comment %}
 <!DOCTYPE html>
 <html lang="en">
@@ -390,12 +154,260 @@
         <form action="{% url 'TestBack:comment_create' test.pk %}" method="post">
             {% csrf_token %}
             <input type="hidden" name="parent_id" value="">
-            <input type="text" name="content" placeholder="댓글을 입력하세요.">
+            <input type="text" name="content" placeholder="댓글을 입력하세요." name="content">
             <label><input type="checkbox" name="is_anonymous"> 익명</label>
             <button type="submit">등록</button>
         </form>
     {% endif %}
 </body>
 </html>
-
 {% endcomment %}
+
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>시험 후기 게시물</title>
+    <link rel="stylesheet" href="{% static 'css/reviewDetail.css' %}">
+</head>
+<body>
+    <header class="header">
+        <img class="logo-img" src="{% static 'img/logo.svg' %}" alt="로고 이미지">
+        <div class="banner">
+            <span class="current-banner">게시판</span>
+            <span class="other-banner">강의실</span>
+            <span class="other-banner">시간표</span>
+            <span class="other-banner">학점계산기</span>
+        </div>
+        <div class="users-menu">
+            <img class="alert" src="{% static 'img/alert.svg' %}" alt="알림 이미지">
+            <img class="profile-picture" src="{% static 'img/profile_pic.svg' %}" alt="프로필 사진">
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="section">
+            <article class="post">
+                <div class="post-header">
+                    <div class="list-btn">
+                        <img class="list-arrow" src="{% static 'img/list_btn_arrow.svg' %}" alt="화살표">
+                        <a href="{% url 'TestBack:test_list' %}" class="to-list" style="text-decoration: none;">목록으로</a>
+                    </div>
+
+                    <div class="title">{{ test.title }}</div>
+
+                    <div class="post-details">
+                        <div class="writer-info">
+                            <span>{{ test.course.subject }}</span> 
+                            <span>{{ test.user.username }}</span>
+                            <span>{{ test.user.grade }}학년</span>
+                            <span>{{ test.created_at|date:"Y.m.d H:i" }}</span>
+                            <span>조회 {{ test.views }}</span>
+                        </div>
+                        {% if user == test.user %}
+                        <div class="modifies">
+                            <a href="{% url 'TestBack:test_update' test.pk %}" class="modify" style="text-decoration:none; color:inherit; align-items: center;">수정하기</a>
+                            
+                            <form id="delete-form-post-{{ test.pk }}" action="{% url 'TestBack:test_delete' test.pk %}" method="post" style="display: inline; margin: 0; padding: 0;">
+                                {% csrf_token %}
+                                <button type="button" class="modify" onclick="openDeleteModal()" style="background: none; border: none; font-family: inherit; font-size: inherit; color: inherit; cursor: pointer; padding: 0; margin-left: 10px;">삭제하기</button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="post-content">
+                    <div class="difficulty">
+                        <div class="heading">시험 난이도</div>
+                        <div class="rating">평점: {{ test.rating }}.0/5.0</div>
+                    </div>
+                    <div class="type">
+                        <div class="heading">시험 유형</div>
+                        <div class="text">
+                            <span>{{ test.test_format }} ({{ test.exam_type }})</span>
+                        </div>
+                    </div>
+                    <div class="overall">
+                        <div class="heading">총평</div>
+                        <div class="overall-text">
+                            <div>{{ test.content }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="btns">
+                        <a href="{% url 'TestBack:test_like' test.pk %}" class="like" style="text-decoration:none; color:inherit;">
+                            <img src="{% static 'img/like.svg' %}" alt="좋아요">
+                            <span class="btn-text">좋아요 {{ test.likes.count }}</span>
+                        </a>
+                        <a href="{% url 'TestBack:test_scrap' test.pk %}" class="scrap">
+                            <img src="{% static 'img/scrap.svg' %}" alt="스크랩">
+                            <span class="btn-text">스크랩 {{ test.scraps.count }}</span>
+                        </a>
+                        <div class="share">
+                            <img src="{% static 'img/share.svg' %}" alt="공유하기">
+                            <span class="btn-text">공유하기</span>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <article class="post-comments">
+                <div class="comment-heading">
+                    <span>댓글</span>
+                    <span class="comment-count">{{ test.comments.count }}</span>
+                </div>
+
+                {% for comment in test.comments.all %}
+                {% if comment.parent is None %}
+                <div class="single-comment">
+                    <img class="profile-pic" src="{% static 'img/profile_pic.svg' %}" alt="프로필 사진">
+                    <div class="comment-text">
+                        <div class="comment-header">
+                            <span class="anonym">
+                                {% if comment.is_anonymous %}익명{{ comment.get_anonymous_number }}
+                                {% else %}{{ comment.user.username }}{% if comment.user == test.user %}(작성자){% endif %}{% endif %}
+                            </span>
+                            
+                            <div class="comment-actions">
+                                <button type="button" class="action-btn" onclick="toggleReplyForm('{{ comment.id }}')">대댓글</button>
+                                
+                                {% if user == comment.user %}
+                                <span class="action-btn">수정하기</span> 
+                                <form action="{% url 'TestBack:comment_delete' comment.id %}" method="post" class="delete-comment-form" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="action-btn" style="background: none; border: none; cursor: pointer; padding: 0; font-family: inherit;">삭제하기</button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <p class="comment">{{ comment.content }}</p>
+                        <div class="comment-info">
+                            <span class="comment-time">{{ comment.created_at|date:"Y.m.d H:i" }}</span>
+                            <a href="{% url 'TestBack:comment_like' comment.id %}" class="comment-like" style="text-decoration:none; color:inherit;">
+                                <img class="comment-like-img" src="{% static 'img/comment_like.svg' %}" alt="댓글 좋아요">
+                                <span class="comment-like-count">{{ comment.likes.count }}</span> 
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <form method="POST" action="{% url 'TestBack:comment_create' test.pk %}" class="new-reply-wrap" id="reply-form-{{ comment.id }}">
+                    {% csrf_token %}
+                    <input type="hidden" name="parent_id" value="{{ comment.id }}"> <div class="new-comment" style="flex-grow: 1;">
+                        <input type="text" class="input" placeholder="대댓글을 입력하세요." name="content" style="width:100%;">
+                        <div class="whether-anonym">
+                            <input type="checkbox" class="anonym-check" name="is_anonymous">
+                            <span class="anonym-text">익명</span>
+                        </div>
+                    </div>
+                    <button type="submit" class="submit">등록</button>
+                </form>
+
+                    {% for reply in comment.replies.all %}
+                    <div class="single-reply"> <img class="profile-pic" src="{% static 'img/profile_pic.svg' %}" alt="프로필 사진">
+                        <div class="reply">
+                            <div class="reply-bar">
+                                <span class="anonym">
+                                    {% if reply.is_anonymous %}익명{{ reply.get_anonymous_number }}
+                                    {% else %}{{ reply.user.username }}{% if reply.user == test.user %}(작성자){% endif %}{% endif %}
+                                </span>
+                                {% if user == reply.user %}
+                                <div class="reply-modifies">
+                                    <span class="action-btn">수정하기</span>
+                                    <form action="{% url 'TestBack:comment_delete' reply.id %}" method="post" class="delete-comment-form" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="action-btn" style="background: none; border: none; cursor: pointer; padding: 0; font-family: inherit;">삭제하기</button>
+                                    </form>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <p class="comment">{{ reply.content }}</p>
+                            <div class="comment-info">
+                                <span class="comment-time">{{ reply.created_at|date:"Y.m.d H:i" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+                {% empty %}
+                <div class="none">
+                    <img class="none-img" src="{% static 'img/none_icon.svg' %}" alt="댓글 없음 이미지">
+                    <div class="require">첫 댓글을 남겨주세요.</div>
+                </div>
+                {% endfor %}
+
+                <form method="POST" action="{% url 'TestBack:comment_create' test.pk %}" class="new-comment-wrap">
+                    {% csrf_token %}
+                    <input type="hidden" name="parent_id" value="">
+                    <div class="new-comment">
+                        <input type="text" class="input" placeholder="댓글을 입력하세요." name="content">
+                        <div class="whether-anonym">
+                            <input type="checkbox" class="anonym-check" name="is_anonymous">
+                            <span class="anonym-text">익명</span>
+                        </div>
+                    </div>
+                    <button type="submit" class="submit">등록</button>
+                </form>
+            </article>
+        </section>
+
+        <aside class="aside">
+            <p class="more">이 작성자가 쓴 다른 글</p>
+
+            {% for my_post in author_other_tests %}
+            <div class="single-article">
+                <div class="aside-article">
+                    <div class="aside-title">{{ my_post.title }}</div>
+                    <div class="aside-info">
+                        <span class="aside-time">{{ my_post.created_at|date:"Y.m.d H:i" }}</span>
+                        <span>조회 {{ my_post.views }}</span>
+                    </div>
+                </div>
+                <a href="{% url 'TestBack:test_detail' my_post.pk %}">
+                    <img class="aside-arrow" src="{% static 'img/aside_arrow.svg' %}" alt="화살표">
+                </a>
+            </div>
+            
+            {% empty %}
+            <div class="single-article">
+                <div class="aside-title">아직 작성한 다른 글이 없습니다.</div>
+            </div>
+            {% endfor %}
+
+            <button type="button" class="aside-button">더보기</button>
+        </aside>
+    </div>
+
+    <div class="delete-modal-wrap">
+        <div class="modal-content">
+            <img src="{% static 'img/warning.svg' %}" alt="경고" class="modal-warning-icon">
+            <div class="warning-q">게시글을 삭제하시겠습니까?</div>
+            <div class="modal-desc">삭제된 게시글은 복구할 수 없습니다.</div>
+            <div class="modal-btns">
+                <button type="button" class="btn-cancel" onclick="closeDeleteModal()">취소</button>
+                <button type="button" class="btn-delete" onclick="confirmDelete('{{ test.pk }}')">삭제</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openDeleteModal() {
+            const modal = document.querySelector('.delete-modal-wrap');
+            if (modal) modal.style.display = 'flex';
+        }
+        function closeDeleteModal() {
+            const modal = document.querySelector('.delete-modal-wrap');
+            if (modal) modal.style.display = 'none';
+        }
+        function confirmDelete(testPk) {
+            const form = document.getElementById('delete-form-post-' + testPk);
+            if (form) form.submit();
+        }
+    </script>
+    <script src="{% static 'js/reviewDetail.js' %}"></script>
+</body>
+</html>

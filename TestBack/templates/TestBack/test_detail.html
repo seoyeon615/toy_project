@@ -109,8 +109,16 @@
                     <div class="comment-text">
                         <div class="comment-header">
                             <span class="anonym">
-                                {% if comment.is_anonymous %}익명{{ comment.get_anonymous_number }}
-                                {% else %}{{ comment.user.username }}{% if comment.user == test.user %}(작성자){% endif %}{% endif %}
+                                {% if comment.is_anonymous %}
+                                    {% if comment.user == test.user %}
+                                        익명(작성자)
+                                    {% else %}
+                                        익명{{ comment.get_anonymous_number }}
+                                    {% endif %}
+                                {% else %}
+                                    {{ comment.user.username }}
+                                    {% if comment.user == test.user %}(작성자){% endif %}
+                                {% endif %}
                             </span>
                             
                             <div class="comment-actions">
@@ -155,8 +163,16 @@
                     <div class="reply">
                         <div class="reply-bar">
                             <span class="anonym">
-                                {% if reply.is_anonymous %}익명{{ reply.get_anonymous_number }}
-                                {% else %}{{ reply.user.username }}{% if reply.user == test.user %}(작성자){% endif %}{% endif %}
+                                {% if reply.is_anonymous %}
+                                    {% if reply.user == test.user %}
+                                        익명(작성자)
+                                    {% else %}
+                                        익명{{ reply.get_anonymous_number }}
+                                    {% endif %}
+                                {% else %}
+                                    {{ reply.user.username }}
+                                    {% if reply.user == test.user %}(작성자){% endif %}
+                                {% endif %}
                             </span>
                             {% if user == reply.user %}
                             <div class="reply-modifies">
@@ -171,6 +187,11 @@
                         <p class="comment">{{ reply.content }}</p>
                         <div class="comment-info">
                             <span class="comment-time">{{ reply.created_at|date:"Y.m.d H:i" }}</span>
+
+                            <a href="{% url 'TestBack:comment_like' reply.id %}" class="comment-like">
+                                <img class="comment-like-img" src="{% static 'img/comment_like.svg' %}" alt="댓글 좋아요">
+                                <span class="comment-like-count">{{ reply.likes.count }}</span>
+                            </a>
                         </div>
                     </div>
                 </div>

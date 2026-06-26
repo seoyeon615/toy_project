@@ -35,7 +35,7 @@
 
                     <div class="post-details">
                         <div class="writer-info">
-                            <span>{{ test.course.subject }}</span>
+                            <span>{{ test.course.subject }}</span> 
                             <span>{{ test.user.username }}</span>
                             <span>{{ test.user.grade }}학년</span>
                             <span>{{ test.created_at|date:"Y.m.d H:i" }}</span>
@@ -43,7 +43,8 @@
                         </div>
                         {% if user == test.user %}
                         <div class="modifies">
-                            <a href="{% url 'TestBack:test_update' test.pk %}" class="modify" style="text-decoration:none; color:inherit;">수정하기</a>
+                            <a href="{% url 'TestBack:test_update' test.pk %}" class="modify" style="text-decoration:none; color:inherit; align-items: center;">수정하기</a>
+                            
                             <form id="delete-form-post-{{ test.pk }}" action="{% url 'TestBack:test_delete' test.pk %}" method="post" style="display: inline; margin: 0; padding: 0;">
                                 {% csrf_token %}
                                 <button type="button" class="modify" onclick="openDeleteModal()" style="background: none; border: none; font-family: inherit; font-size: inherit; color: inherit; cursor: pointer; padding: 0; margin-left: 10px;">삭제하기</button>
@@ -70,7 +71,7 @@
                             <div>{{ test.content }}</div>
                         </div>
                     </div>
-
+                    
                     <div class="btns">
                         <a href="{% url 'TestBack:test_like' test.pk %}" class="like" style="text-decoration:none; color:inherit;">
                             <img src="{% static 'img/like.svg' %}" alt="좋아요">
@@ -112,10 +113,10 @@
                                     {% if comment.user == test.user %}(작성자){% endif %}
                                 {% endif %}
                             </span>
-
+                            
                             <div class="comment-actions">
                                 <button type="button" class="action-btn" onclick="toggleReplyForm('{{ comment.id }}')">대댓글</button>
-
+                                
                                 {% if user == comment.user %}
                                 <a href="?edit_comment={{ comment.id }}" class="action-btn" style="text-decoration:none; color:inherit;">수정하기</a>
                                 <form action="{% url 'TestBack:comment_delete' comment.id %}" method="post" class="delete-comment-form" style="display: inline;">
@@ -130,7 +131,7 @@
                             <span class="comment-time">{{ comment.created_at|date:"Y.m.d H:i" }}</span>
                             <a href="{% url 'TestBack:comment_like' comment.id %}" class="comment-like" style="text-decoration:none; color:inherit;">
                                 <img class="comment-like-img" src="{% static 'img/comment_like.svg' %}" alt="댓글 좋아요">
-                                <span class="comment-like-count">{{ comment.likes.count }}</span>
+                                <span class="comment-like-count">{{ comment.likes.count }}</span> 
                             </a>
                         </div>
                     </div>
@@ -179,7 +180,8 @@
                         <p class="comment">{{ reply.content }}</p>
                         <div class="comment-info">
                             <span class="comment-time">{{ reply.created_at|date:"Y.m.d H:i" }}</span>
-                            <a href="{% url 'TestBack:comment_like' reply.id %}" class="comment-like" style="text-decoration:none; color:inherit;">
+
+                            <a href="{% url 'TestBack:comment_like' reply.id %}" class="comment-like">
                                 <img class="comment-like-img" src="{% static 'img/comment_like.svg' %}" alt="댓글 좋아요">
                                 <span class="comment-like-count">{{ reply.likes.count }}</span>
                             </a>
@@ -187,7 +189,6 @@
                     </div>
                 </div>
                 {% endfor %}
-
                 {% endif %}
                 {% empty %}
                 <div class="none">
@@ -207,7 +208,10 @@
                         <input type="text" class="input" placeholder="댓글을 입력하세요." name="content"
                             value="{% if edit_comment %}{{ edit_comment.content }}{% endif %}">
                         <div class="whether-anonym">
-                            <input type="checkbox" class="anonym-check" name="is_anonymous"
+                            <input
+                                type="checkbox"
+                                class="anonym-check"
+                                name="is_anonymous"
                                 {% if edit_comment and edit_comment.is_anonymous %}checked{% endif %}>
                             <span class="anonym-text">익명</span>
                         </div>
@@ -233,6 +237,7 @@
                     <img class="aside-arrow" src="{% static 'img/aside_arrow.svg' %}" alt="화살표">
                 </a>
             </div>
+            
             {% empty %}
             <div class="single-article">
                 <div class="aside-title">아직 작성한 다른 글이 없습니다.</div>

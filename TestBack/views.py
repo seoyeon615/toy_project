@@ -55,10 +55,17 @@ def test_detail(request, pk):
             test.save()
     
     author_other_tests = Test.objects.filter(user=test.user).exclude(pk=pk).order_by('-created_at')[:3]
+
+    # 수정할 댓글 불러오기
+    edit_comment = None
+    edit_comment_id = request.GET.get('edit_comment')
+    if edit_comment_id:
+        edit_comment = get_object_or_404(Comment, id=edit_comment_id, user=request.user)
     
     return render(request, 'TestBack/test_detail.html', {
         'test': test,
-        'author_other_tests': author_other_tests
+        'author_other_tests': author_other_tests,
+        'edit_comment': edit_comment,
     })
 
 @login_required

@@ -8,6 +8,18 @@ body {
     background-color: #fefdf7;
 }
 
+.signup-title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.logo-lion-only {
+    margin: 0 5px 0 0;
+    width: 60px;
+    height: 60px;
+}
+
 .signup-container {
     box-sizing: border-box;
     border: 1px solid #EDEDED;
@@ -58,30 +70,120 @@ label {
     box-sizing: border-box;
     margin-top: 4px;
     padding: 8px 40px 8px 8px;
-    border: 1px solid #EDEDED;
+    border: 1px solid #0a2e65;
     border-radius: 12px;
     width: 100%;
     height: 40px;
     line-height: 24px;
     color: #292929;
     font-size: 16px;
-    background-color: #F9F9F9;
+    background-color: transparent;
     outline: none;
 }
 
+.input-box::placeholder {
+    color: rgba(0, 0, 0, 0.25);
+    font-size: 16px;
+}
+
+.submit-btn-wrap {
+    display: flex;
+    justify-content: center;
+        margin-top: 64px;
+
+}
+
 .submit-btn {
-    margin-top: 24px;
     border: 0;
     border-radius: 12px;
-    width: 100%;
+    width: 30%;
     height: 40px;
     color: white;
     font-size: 16px;
     font-weight: bold;
     background-color: #6b6b6b;
+    justify-content: center;
 }
 
 .submit-btn.active {
     background-color: #0A2E65;
     cursor: pointer;
+}
+
+.to-login {
+    margin-top: 16px;
+    text-align: center;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.41);
+}
+
+.to-login a {
+    color: #0A2E65;
+    text-decoration: none;
+}
+
+
+
+.custom-select-wrap {
+    position: relative;
+    width: 100%;
+    margin-top: 4px;
+}
+
+.custom-select-trigger {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 8px 12px;
+    border: 1px solid #0A2E65;
+    border-radius: 12px;
+    height: 40px;
+    background-color: #FEFDF7;
+    color: rgba(0, 0, 0, 0.25);
+    font-size: 16px;
+    cursor: pointer;
+}
+    
+.custom-select-trigger::after {
+    content: "▼";
+    font-size: 12px;
+    transition: transform 0.3s ease;
+}
+
+.custom-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 5px;
+    padding: 0;
+    list-style: none;
+    background-color: #FEFDF7;
+    border: 1px solid #0A2E65;
+    border-radius: 12px;
+    overflow: hidden;
+    z-index: 10;
+    display: none;
+}
+
+.custom-select-wrap.open .custom-options {
+    display: block;
+}
+
+.custom-select-wrap.open .custom-select-trigger::after {
+    transform: rotate(180deg);
+}
+
+.custom-option {
+    padding: 10px 12px;
+    color: rgba(0, 0, 0, 0.25);
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.custom-option:hover {
+    background-color: #0A2E65;
+    color: #FFFFFF;
 }

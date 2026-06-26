@@ -9,9 +9,12 @@
 </head>
 <body>
     <div class="signup-container">
-        <h2>멋사대학교 회원가입</h2>
+        <div class="signup-title">
+            <img class=logo-lion-only src="{% static 'img/logo-lion-only.svg' %}" alt="멋사대학교 로고" />
+            <h2>멋사대학교 회원가입</h2>
+        </div>
         <div class="announcement">
-            <p>멋사대학교 계정으로 <span class="emphasize">시험 후기 게시판</span>을<span></span></p>
+            <p>멋사대학교 계정으로 시험 후기 게시판을</p>
             <p>포함한 다양한 대학생 서비스를 모두 이용하실 수 있습니다.</p>
         </div>
 
@@ -34,17 +37,31 @@
                 <input type="password" id="confirm-password" class="input-box" placeholder="비밀번호를 재입력하세요." name="password_confirm" required>
             </div>
             <div class="each-input">
-                <label for="grade">학년</label>
-                <select id="grade" class="input-box" name="grade" style="appearance: auto;" required>
-                    <option value="1">1 학년</option>
-                    <option value="2">2 학년</option>
-                    <option value="3">3 학년</option>
-                    <option value="4">4 학년</option>
-                </select>
+                <label>학년</label>
+                
+                <input type="hidden" name="grade" id="grade-input" value="1" required>
+
+                <div class="custom-select-wrap" id="grade-custom-select">
+                    <div class="custom-select-trigger">
+                        <span class="selected-text">1학년</span>
+                    </div>
+                    <ul class="custom-options">
+                        <li class="custom-option" data-value="1">1학년</li>
+                        <li class="custom-option" data-value="2">2학년</li>
+                        <li class="custom-option" data-value="3">3학년</li>
+                        <li class="custom-option" data-value="4">4학년</li>
+                    </ul>
+                </div>
             </div>
-            
-            <button type="submit" id="signup-btn" class="submit-btn">회원가입</button>
+
+            <div class="submit-btn-wrap">
+                <button type="submit" id="signup-btn" class="submit-btn">회원가입</button>
+            </div>
         </form>
+
+        <div class="to-login">
+            이미 계정이 있으신가요? <a href="{% url 'users:login' %}">로그인</a>
+        </div>
     </div>
     
     <script src="{% static 'js/reviewSignup.js' %}"></script>

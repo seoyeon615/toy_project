@@ -43,19 +43,25 @@ def test_create(request):
 
 def test_detail(request, pk):
     test = get_object_or_404(Test, pk=pk)
-
-    if request.user != test.user:
-        test.views += 1
-        test.save()
-
+    
+    skip_view = request.session.pop('skip_view_count', False)
+    
+    if not skip_view:
+        if request.user.is_authenticated and test.user != request.user:
+            test.views += 1
+            test.save()
+        elif not request.user.is_authenticated:
+            test.views += 1
+            test.save()
+    
     author_other_tests = Test.objects.filter(user=test.user).exclude(pk=pk).order_by('-created_at')[:3]
 
     # 수정할 댓글 불러오기
     edit_comment = None
     edit_comment_id = request.GET.get('edit_comment')
     if edit_comment_id:
-        edit_comment = Comment.objects.filter(id=edit_comment_id, user=request.user).first()
-
+        edit_comment = get_object_or_404(Comment, id=edit_comment_id, user=request.user)
+    
     return render(request, 'TestBack/test_detail.html', {
         'test': test,
         'author_other_tests': author_other_tests,
@@ -187,13 +193,11 @@ def comment_delete(request, comment_id):
 @login_required
 def comment_update(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
-    
     if comment.user != request.user:
         return redirect('TestBack:test_detail', pk=comment.test.pk)
 
     if request.method == 'POST':
         comment.content = request.POST.get('content')
-        comment.is_anonymous = "is_anonymous" in request.POST
         comment.save()
     request.session['skip_view_count'] = True
     return redirect('TestBack:test_detail', pk=comment.test.pk)

@@ -1,13 +1,51 @@
 from django.db import models
 from django.conf import settings
 
-class Course(models.Model):
-    course_number = models.CharField(max_length=20, unique=True, help_text="과목 번호 (학수번호)")
-    subject = models.CharField(max_length=100, help_text="과목명")
-    professor = models.CharField(max_length=50, help_text="담당 교수")
+from django.db import models
+
+
+class Department(models.Model):
+    name = models.CharField(max_length=50)
 
     def __str__(self):
-        return f"[{self.course_number}] {self.subject} - {self.professor} 교수님"
+        return self.name
+
+
+class Course(models.Model):
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='courses')
+    name = models.CharField(max_length=100) 
+
+    def __str__(self):
+        return self.name
+
+class Professor(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='professors')
+    name = models.CharField(max_length=50)   # 예: 김영호, 이정우
+
+    def __str__(self):
+        return self.name
+
+class ExamReview(models.Model):
+
+    EXAM_TYPE_CHOICES = [
+        ('객관식', '객관식'),
+        ('단답형', '단답형'),
+        ('서술형', '서술형'),
+        ('논술형', '논술형'),
+        ('코딩/실습', '코딩/실습'),
+        ('기타', '기타'),
+    ]
+
+    department = models.ForeignKey(Department, on_delete=models.PROTECT)
+    course = models.ForeignKey(Course, on_delete=models.PROTECT)
+    professor = models.ForeignKey(Professor, on_delete=models.PROTECT)
+    
+    semester = models.CharField(max_length=20) 
+    difficulty = models.IntegerField()       
+    exam_info = models.TextField(max_length=500) 
+    exam_type = models.CharField(max_length=20, choices=EXAM_TYPE_CHOICES) 
+    review = models.TextField(max_length=10000)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class Test(models.Model):

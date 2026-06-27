@@ -209,6 +209,5 @@ def comment_like(request, comment_id):
         comment.likes.remove(request.user)
     else:
         comment.likes.add(request.user)
-    # 🌟 댓글 좋아요 시 조회수 스킵
     request.session['skip_view_count'] = True
     return redirect('TestBack:test_detail', pk=comment.test.pk)
